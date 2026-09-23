@@ -51,4 +51,21 @@ class Document extends Model
     {
         return $this->hasMany(DocumentShare::class);
     }
+/**
+     * Quand la version courante change, le document reprend le fichier,
+     * la taille et le type de cette version (téléchargement, aperçu, affichage).
+     */
+    protected static function booted(): void
+    {
+        static::saving(function (Document $document) {
+            if ($document->isDirty("current_version_id") && $document->current_version_id) {
+                $version = DocumentVersion::find($document->current_version_id);
+                if ($version) {
+                    $document->nas_path = $version->file_path;
+                    $document->file_size = $version->file_size;
+                    $document->mime_type = $version->mime_type;
+                }
+            }
+        });
+    }
 }

@@ -12,6 +12,13 @@ class DocumentShare extends Model
 
     protected $hidden = ['password_hash'];
 
+    protected $appends = ['has_password'];
+
+    public function getHasPasswordAttribute(): bool
+    {
+        return ! empty($this->password_hash);
+    }
+
     protected $fillable = [
         'document_id', 'token', 'password_hash', 'expires_at',
         'max_downloads', 'download_count', 'created_by',
