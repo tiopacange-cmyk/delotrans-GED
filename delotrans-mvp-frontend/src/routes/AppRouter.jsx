@@ -1,3 +1,6 @@
+import NasPage from '../pages/admin/NasPage';
+import BackupsPage from '../pages/admin/BackupsPage';
+import LogsPage from '../pages/admin/LogsPage';
 import SharePage from '../pages/public/SharePage';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
@@ -26,6 +29,9 @@ export default function AppRouter() {
             <Route path="/clients" element={<ClientsListPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path="/admin/nas" element={<NasPage />} />
+            <Route path="/admin/sauvegardes" element={<BackupsPage />} />
+            <Route path="/admin/journal" element={<LogsPage />} />
           </Route>
         </Route>
       </Routes>

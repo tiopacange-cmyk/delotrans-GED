@@ -11,6 +11,9 @@ import {
   Menu,
   X,
   FileStack,
+  HardDrive,
+  DatabaseBackup,
+  ScrollText,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { authApi } from '../../api/authApi';
@@ -22,6 +25,12 @@ const navigation = [
   { to: '/clients', label: 'Clients', icon: Users },
   { to: '/categories', label: 'Catégories', icon: Tags },
   { to: '/search', label: 'Recherche', icon: Search },
+];
+
+const administration = [
+  { to: '/admin/nas', label: 'Stockage NAS', icon: HardDrive },
+  { to: '/admin/sauvegardes', label: 'Sauvegardes', icon: DatabaseBackup },
+  { to: '/admin/journal', label: 'Journal d\'activité', icon: ScrollText },
 ];
 
 function initiales(nom) {
@@ -63,7 +72,7 @@ export default function AppLayout() {
       </div>
 
       {/* Liens */}
-      <ul className="flex-1 space-y-1 px-3 py-4">
+      <ul className="space-y-1 px-3 py-4">
         {navigation.map(({ to, label, icon: Icon, end }) => (
           <li key={to}>
             <NavLink
@@ -84,6 +93,30 @@ export default function AppLayout() {
           </li>
         ))}
       </ul>
+
+      <p className="px-6 pt-2 text-xs font-semibold uppercase tracking-wider text-brand-200/60">Administration</p>
+      <ul className="space-y-1 px-3 py-2">
+        {administration.map(({ to, label, icon: Icon, end }) => (
+          <li key={to}>
+            <NavLink
+              to={to}
+              end={end}
+              onClick={() => setMenuOuvert(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-white/10 text-white shadow-[inset_3px_0_0_var(--color-accent-500)]'
+                    : 'text-brand-200 hover:bg-white/5 hover:text-white'
+                }`
+              }
+            >
+              <Icon size={18} />
+              {label}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
+      <div className="flex-1" />
 
       <div className="border-t border-white/10 px-5 py-4 text-xs text-brand-200">
         DELOTRANS GED

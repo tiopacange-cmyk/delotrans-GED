@@ -84,6 +84,21 @@ class NasConfigController extends Controller
 
     public function status(NasConfig $config, NasStorageService $nasStorage)
     {
-        return response()->json(['data' => $nasStorage->getDiskUsage($config) + ['status' => $config->status]]);
+        $usage = $nasStorage->getDiskUsage($config);
+
+        // État réel : pour SMB/NFS, le point de montage doit exister et être accessible en écriture
+        $enLigne = in_array($config->protocol, ['smb', 'nfs'], true)
+            ? (is_dir($config->base_path) && is_writable($config->base_path))
+            : $config->status === 'online';
+        $statut = $enLigne ? 'online' : 'offline';
+
+        // Mémorise l'état et l'espace mesurés (sans polluer le journal)
+        $config->forceFill([
+            'status' => $statut,
+            'total_space_bytes' => $usage['total_bytes'] ?? $config->total_space_bytes,
+            'used_space_bytes' => $usage['used_bytes'] ?? $config->used_space_bytes,
+        ])->saveQuietly();
+
+        return response()->json(['data' => $usage + ['status' => $statut]]);
     }
 }
