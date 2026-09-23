@@ -1,3 +1,4 @@
+import SharePage from '../pages/public/SharePage';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import AppLayout from '../components/layout/AppLayout';
@@ -15,6 +16,7 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/partage/:token" element={<SharePage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
