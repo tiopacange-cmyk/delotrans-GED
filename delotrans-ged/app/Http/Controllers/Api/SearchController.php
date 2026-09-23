@@ -21,7 +21,11 @@ class SearchController extends Controller
         ]);
 
         $results = Document::query()
-            ->when($request->q, fn ($q) => $q->where('name', 'like', "%{$request->q}%"))
+            ->when($request->q, fn ($q) => $q->where(fn ($w) => $w
+                ->where('name', 'like', "%{$request->q}%")
+                ->orWhereHas('category', fn ($c) => $c->where('name', 'like', "%{$request->q}%"))
+                ->orWhereHas('client', fn ($c) => $c->where('name', 'like', "%{$request->q}%")->orWhere('code', 'like', "%{$request->q}%"))
+            ))
             ->when($request->client_id, fn ($q) => $q->where('client_id', $request->client_id))
             ->when($request->category_id, fn ($q) => $q->where('category_id', $request->category_id))
             ->when($request->folder_id, fn ($q) => $q->where('folder_id', $request->folder_id))
