@@ -14,6 +14,8 @@ class V2PermissionSeeder extends Seeder
             ['slug' => 'backups.view',              'name' => 'Voir les sauvegardes',               'module' => 'backups'],
             ['slug' => 'backups.run',               'name' => 'Lancer une sauvegarde',              'module' => 'backups'],
             ['slug' => 'backups.delete',            'name' => 'Supprimer une sauvegarde',           'module' => 'backups'],
+            ['slug' => 'documents.version.create',  'name' => 'Ajouter une version',                'module' => 'documents'],
+            ['slug' => 'shares.create',             'name' => 'Créer un partage',                   'module' => 'shares'],
             ['slug' => 'documents.version.restore', 'name' => 'Restaurer une version',              'module' => 'documents'],
             ['slug' => 'documents.version.delete',  'name' => 'Supprimer une version',              'module' => 'documents'],
             ['slug' => 'logs.view_own',             'name' => 'Voir son propre journal',            'module' => 'logs'],

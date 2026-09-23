@@ -34,6 +34,8 @@ class DocumentController extends Controller
         $file = $request->file('file');
         $nasPath = $this->nasStorage->store($file, $request->folder_id);
 
+                $checksum = hash_file('sha256', $file->getRealPath());
+
         $document = Document::create([
             'name' => $request->name ?? $file->getClientOriginalName(),
             'folder_id' => $request->folder_id,
@@ -45,7 +47,21 @@ class DocumentController extends Controller
             'created_by' => $request->user()->id,
         ]);
 
-        return response()->json(['data' => $document], 201);
+        // V2 : le fichier d'origine devient la version 1
+        $version = \App\Models\DocumentVersion::create([
+            'document_id' => $document->id,
+            'version_number' => 1,
+            'file_path' => $nasPath,
+            'file_size' => $file->getSize(),
+            'mime_type' => $file->getMimeType(),
+            'checksum' => $checksum,
+            'comment' => 'Version initiale',
+            'created_by' => $request->user()->id,
+        ]);
+
+        $document->update(['current_version_id' => $version->id]);
+
+        return response()->json(['data' => $document->fresh()], 201);
     }
 
     public function show(Document $document)
