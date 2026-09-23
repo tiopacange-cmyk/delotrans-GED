@@ -12,6 +12,22 @@ class FolderController extends Controller
 {
     public function index(Request $request)
     {
+        // Liste complète à plat (menus déroulants), avec le chemin lisible
+        if ($request->boolean("all")) {
+            $tous = Folder::orderBy("name")->get(["id", "name", "parent_id", "path"]);
+            $noms = $tous->pluck("name", "id");
+            $liste = $tous->map(fn ($f) => [
+                "id" => $f->id,
+                "name" => $f->name,
+                "parent_id" => $f->parent_id,
+                "label" => collect(preg_split("/[\\/.,>]/", (string) $f->path, -1, PREG_SPLIT_NO_EMPTY))
+                    ->map(fn ($id) => $noms[(int) $id] ?? "?")
+                    ->implode(" / "),
+            ])->sortBy("label")->values();
+
+            return response()->json(["data" => $liste]);
+        }
+
         $folders = Folder::query()
             ->where('parent_id', $request->integer('parent_id') ?: null)
             ->with(['category', 'client'])

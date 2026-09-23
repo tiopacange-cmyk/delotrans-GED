@@ -115,7 +115,7 @@ export default function DocumentsListPage() {
   }, [chargerDocuments]);
 
   useEffect(() => {
-    foldersApi.list().then((r) => setDossiers(liste(r))).catch(() => {});
+    axiosClient.get('/folders', { params: { all: 1 } }).then((r) => setDossiers(liste(r))).catch(() => {});
     categoriesApi.list().then((r) => setCategories(liste(r))).catch(() => {});
     clientsApi.list().then((r) => setClients(liste(r))).catch(() => {});
   }, []);
@@ -276,7 +276,7 @@ export default function DocumentsListPage() {
           <option value="">Tous les dossiers</option>
           {dossiers.map((d) => (
             <option key={d.id} value={d.id}>
-              {d.name}
+              {d.label ?? d.name}
             </option>
           ))}
         </select>
@@ -466,7 +466,7 @@ export default function DocumentsListPage() {
                   <option value="">— Choisir un dossier —</option>
                   {dossiers.map((d) => (
                     <option key={d.id} value={d.id}>
-                      {d.name}
+                      {d.label ?? d.name}
                     </option>
                   ))}
                 </select>
