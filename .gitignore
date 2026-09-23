@@ -1,0 +1,14 @@
+node_modules/
+vendor/
+.env
+.env.*
+!.env.example
+dist/
+build/
+storage/*.key
+storage/logs/
+storage/framework/
+storage/app/private/
+storage/app/public/
+*.sqlite
+.DS_Store
