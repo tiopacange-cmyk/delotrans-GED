@@ -22,6 +22,13 @@ Route::prefix('v1')->group(function () {
     // Publiques
     Route::post('/auth/login', [AuthController::class, 'login']);
 
+    // Partage public (sans compte, limité à 20 requêtes/minute)
+    Route::prefix('public/shares')->middleware('throttle:20,1')->group(function () {
+        Route::get('/{token}', [DocumentShareController::class, 'publicShow']);
+        Route::post('/{token}/unlock', [DocumentShareController::class, 'unlock']);
+        Route::get('/{token}/download', [DocumentShareController::class, 'download']);
+    });
+
     // Authentifiées
     Route::middleware('auth:sanctum')->group(function () {
 
@@ -64,5 +71,43 @@ Route::prefix('v1')->group(function () {
         // Tableau de bord
         Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
         Route::get('/dashboard/recent-documents', [DashboardController::class, 'recentDocuments']);
+
+        // ===== V2 =====
+
+        // Versions des documents
+        Route::get('/documents/{document}/versions', [DocumentVersionController::class, 'index']);
+        Route::post('/documents/{document}/versions', [DocumentVersionController::class, 'store']);
+        Route::get('/documents/{document}/versions/{version}/download', [DocumentVersionController::class, 'download']);
+        Route::post('/documents/{document}/versions/{version}/restore', [DocumentVersionController::class, 'restore']);
+        Route::delete('/documents/{document}/versions/{version}', [DocumentVersionController::class, 'destroy']);
+
+        // Partages (gestion)
+        Route::get('/documents/{document}/shares', [DocumentShareController::class, 'index']);
+        Route::post('/documents/{document}/shares', [DocumentShareController::class, 'store']);
+        Route::delete('/shares/{share}', [DocumentShareController::class, 'destroy']);
+
+        // NAS
+        Route::get('/nas', [NasConfigController::class, 'index']);
+        Route::post('/nas', [NasConfigController::class, 'store']);
+        Route::put('/nas/{config}', [NasConfigController::class, 'update']);
+        Route::delete('/nas/{config}', [NasConfigController::class, 'destroy']);
+        Route::post('/nas/{config}/test', [NasConfigController::class, 'test']);
+        Route::get('/nas/{config}/status', [NasConfigController::class, 'status']);
+
+        // Sauvegardes
+        Route::get('/backups', [BackupController::class, 'index']);
+        Route::post('/backups/run', [BackupController::class, 'run']);
+        Route::get('/backups/{backup}/download', [BackupController::class, 'download']);
+        Route::delete('/backups/{backup}', [BackupController::class, 'destroy']);
+
+        // Journal d'activité
+        Route::get('/logs', [ActivityLogController::class, 'index']);
+        Route::get('/logs/{log}', [ActivityLogController::class, 'show']);
+
+        // Notifications
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::put('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
+        Route::put('/notifications/{notification}/read', [NotificationController::class, 'markAsRead']);
+        Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy']);
     });
 });
