@@ -15,11 +15,13 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  History,
 } from 'lucide-react';
 import axiosClient from '../../api/axiosClient';
 import { documentsApi } from '../../api/documentsApi';
 import { foldersApi } from '../../api/foldersApi';
 import { categoriesApi, clientsApi } from '../../api';
+import DocumentPanel from '../../components/documents/DocumentPanel';
 
 const STATUTS = {
   draft: { label: 'Brouillon', classe: 'bg-slate-100 text-slate-600' },
@@ -82,6 +84,7 @@ export default function DocumentsListPage() {
   const inputFichier = useRef(null);
 
   const [notification, setNotification] = useState(null);
+  const [fiche, setFiche] = useState(null);
 
   const notifier = (type, texte) => {
     setNotification({ type, texte });
@@ -334,6 +337,13 @@ export default function DocumentsListPage() {
                       <td className="px-5 py-3">
                         <div className="flex justify-end gap-1">
                           <button
+                            onClick={() => setFiche(doc)}
+                            title="Fiche : versions et partages"
+                            className="rounded-md p-2 text-slate-500 hover:bg-brand-50 hover:text-brand-600"
+                          >
+                            <History size={16} />
+                          </button>
+                          <button
                             onClick={() => apercu(doc)}
                             title="Aperçu"
                             className="rounded-md p-2 text-slate-500 hover:bg-brand-50 hover:text-brand-600"
@@ -532,6 +542,9 @@ export default function DocumentsListPage() {
             </div>
           </div>
         </div>
+      )}
+      {fiche && (
+        <DocumentPanel document={fiche} onClose={() => setFiche(null)} onChange={() => chargerDocuments(pagination.page)} />
       )}
     </div>
   );
