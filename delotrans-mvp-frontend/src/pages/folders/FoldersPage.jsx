@@ -194,24 +194,24 @@ export default function FoldersPage() {
                 <p className="mt-3 text-sm text-slate-500">Aucun dossier ici.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {sousDossiers.map((d) => (
                   <div
                     key={d.id}
-                    className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-brand-200 hover:shadow"
+                    className="group relative rounded-xl border border-slate-200 bg-white p-4 pr-16 shadow-sm transition hover:border-brand-200 hover:shadow"
                   >
-                    <button onClick={() => ouvrir(d.id)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
+                    <div role="button" tabIndex={0} onClick={() => ouvrir(d.id)} className="flex cursor-pointer items-center gap-3">
                       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-amber-50 text-amber-500">
                         <Folder size={22} fill="currentColor" fillOpacity={0.15} />
                       </span>
-                      <span className="block min-w-0 flex-1">
-                        <span className="block truncate font-medium text-slate-800">{d.name}</span>
-                        <span className="block whitespace-nowrap text-xs text-slate-500">
+                      <div className="min-w-0">
+                        <p className="break-words font-medium text-slate-800">{d.name}</p>
+                        <p className="text-xs text-slate-500">
                           {d.documents_count ?? 0} document{(d.documents_count ?? 0) > 1 ? 's' : ''}
-                        </span>
-                      </span>
-                    </button>
-                    <div className="flex shrink-0 gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
+                        </p>
+                      </div>
+                    </div>
+                    <div className="absolute right-3 top-1/2 flex -translate-y-1/2 gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
                       <button
                         onClick={() => setFenetre({ mode: 'renommer', dossier: d, nom: d.name })}
                         title="Renommer"
