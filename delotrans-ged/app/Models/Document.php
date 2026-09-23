@@ -12,6 +12,7 @@ class Document extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'current_version_id',
         'name', 'folder_id', 'client_id', 'category_id',
         'mime_type', 'file_size', 'nas_path', 'status', 'created_by',
     ];

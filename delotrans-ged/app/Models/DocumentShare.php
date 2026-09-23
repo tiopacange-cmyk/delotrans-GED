@@ -8,6 +8,10 @@ use Illuminate\Support\Str;
 
 class DocumentShare extends Model
 {
+    const UPDATED_AT = null;
+
+    protected $hidden = ['password_hash'];
+
     protected $fillable = [
         'document_id', 'token', 'password_hash', 'expires_at',
         'max_downloads', 'download_count', 'created_by',

@@ -26,7 +26,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('public/shares')->middleware('throttle:20,1')->group(function () {
         Route::get('/{token}', [DocumentShareController::class, 'publicShow']);
         Route::post('/{token}/unlock', [DocumentShareController::class, 'unlock']);
-        Route::get('/{token}/download', [DocumentShareController::class, 'download']);
+        Route::get('/{token}/download', [DocumentShareController::class, 'download'])->name('shares.public.download');
     });
 
     // Authentifiées

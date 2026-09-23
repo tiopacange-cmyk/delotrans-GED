@@ -62,13 +62,31 @@ class DocumentShareController extends Controller
         abort_if($share->isExpired(), 410, 'Ce lien de partage a expiré.');
         abort_unless(Hash::check($request->password, $share->password_hash), 403, 'Mot de passe incorrect.');
 
-        return response()->json(['message' => 'Accès autorisé.']);
+               return response()->json([
+            'message' => 'Accès autorisé.',
+            'download_url' => \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                'shares.public.download',
+                now()->addMinutes(10),
+                ['token' => $token],
+                absolute: false
+            ),
+        ]);
     }
 
-    public function download(string $token, NasStorageService $nasStorage)
+    public function download(\Illuminate\Http\Request $request, string $token, NasStorageService $nasStorage)
     {
         $share = DocumentShare::where('token', $token)->firstOrFail();
         abort_if($share->isExpired(), 410, 'Ce lien de partage a expiré.');
+
+        // Partage protégé : exige le lien signé obtenu après le bon mot de passe
+        if ($share->password_hash) {
+            abort_unless($request->hasValidSignature(false), 403, 'Mot de passe requis.');
+        }
+
+        // Limite de téléchargements
+        if ($share->max_downloads) {
+            abort_if($share->download_count >= $share->max_downloads, 410, 'Nombre maximal de téléchargements atteint.');
+        }
 
         $share->increment('download_count');
 
@@ -77,4 +95,5 @@ class DocumentShareController extends Controller
             $share->document->name
         );
     }
+    
 }
