@@ -1,3 +1,4 @@
+import NotificationBell from './NotificationBell';
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
@@ -164,6 +165,7 @@ export default function AppLayout() {
           <div className="hidden lg:block" />
 
           <div className="flex items-center gap-3">
+            <NotificationBell />
             <div className="hidden text-right sm:block">
               <div className="text-sm font-semibold text-slate-800">{user?.name}</div>
               <div className="text-xs text-slate-500">{user?.role?.name ?? 'Utilisateur'}</div>
