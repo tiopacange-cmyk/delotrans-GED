@@ -26,7 +26,7 @@ if ! curl -s -o /dev/null http://localhost:8000/up; then
   echo "L'API ne répond pas, nouvelle tentative…"
   (cd /workspaces/delotrans-GED/delotrans-ged && nohup php artisan serve --host=0.0.0.0 --port=8000 > /tmp/laravel.log 2>&1 &)
   sleep 5
-  for i in 1 2 3 4 5 6; do gh codespace ports visibility 8000:public -c "$CODESPACE_NAME" > /dev/null 2>&1 && break; sleep 5; done
+  for i in 1 2 3 4 5 6; do gh codespace ports visibility 8000:public 5173:public -c "$CODESPACE_NAME" > /dev/null 2>&1 && break; sleep 5; done
 fi
 echo ""
 echo "===== BILAN ====="
