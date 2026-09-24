@@ -12,7 +12,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        return response()->json(['data' => Category::orderBy('name')->get()]);
+        return response()->json(['data' => Category::withCount('documents')->orderBy('name')->get()]);
     }
 
     public function store(StoreCategoryRequest $request)

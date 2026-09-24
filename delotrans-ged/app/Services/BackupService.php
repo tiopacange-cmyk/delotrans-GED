@@ -29,7 +29,7 @@ class BackupService
             $filename = match ($backup->type) {
                 'database' => $this->dumpDatabase(),
                 'config' => $this->dumpConfig(),
-                'full' => $this->dumpDatabase(),
+                'full' => $this->dumpFull(),
             };
 
             $backup->update([
@@ -85,19 +85,68 @@ class BackupService
         return $filename;
     }
 
+    /**
+     * Sauvegarde complète : une archive contenant la base de données et la configuration.
+     */
+    private function dumpFull(): string
+    {
+        $fichierBase = $this->dumpDatabase();
+        $cheminBase = storage_path('app/' . $fichierBase);
+
+        $fichiers = [$cheminBase => 'base/' . basename($cheminBase)];
+        if (file_exists(base_path('.env'))) {
+            $fichiers[base_path('.env')] = 'config/.env';
+        }
+
+        $archive = $this->creerArchive('backups/complete_' . now()->format('Y_m_d_His'), $fichiers);
+        @unlink($cheminBase); // la copie de la base est maintenant dans l'archive
+
+        return $archive;
+    }
+
+    /**
+     * Sauvegarde de la configuration (.env).
+     */
     private function dumpConfig(): string
     {
-        $filename = 'backups/config_' . now()->format('Y_m_d_His') . '.zip';
-        $path = storage_path('app/' . $filename);
-        @mkdir(dirname($path), 0755, true);
-
-        $zip = new \ZipArchive();
-        $zip->open($path, \ZipArchive::CREATE);
+        $fichiers = [];
         if (file_exists(base_path('.env'))) {
-            $zip->addFile(base_path('.env'), '.env');
+            $fichiers[base_path('.env')] = '.env';
         }
-        $zip->close();
 
-        return $filename;
+        return $this->creerArchive('backups/config_' . now()->format('Y_m_d_His'), $fichiers);
+    }
+
+    /**
+     * Crée une archive ZIP si l'extension zip est disponible, sinon une archive .tar.gz.
+     * Retourne le chemin relatif (dans storage/app) de l'archive créée.
+     */
+    private function creerArchive(string $nomSansExtension, array $fichiers): string
+    {
+        $base = storage_path('app/' . $nomSansExtension);
+        @mkdir(dirname($base), 0755, true);
+
+        if (class_exists(\ZipArchive::class)) {
+            $zip = new \ZipArchive();
+            if ($zip->open($base . '.zip', \ZipArchive::CREATE) !== true) {
+                throw new \RuntimeException("Impossible de créer l'archive ZIP.");
+            }
+            foreach ($fichiers as $source => $nomDansArchive) {
+                $zip->addFile($source, $nomDansArchive);
+            }
+            $zip->close();
+
+            return $nomSansExtension . '.zip';
+        }
+
+        $tar = new \PharData($base . '.tar');
+        foreach ($fichiers as $source => $nomDansArchive) {
+            $tar->addFile($source, $nomDansArchive);
+        }
+        $tar->compress(\Phar::GZ);
+        unset($tar);
+        @unlink($base . '.tar');
+
+        return $nomSansExtension . '.tar.gz';
     }
 }
