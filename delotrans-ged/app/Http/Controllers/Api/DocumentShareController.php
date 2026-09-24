@@ -90,6 +90,20 @@ class DocumentShareController extends Controller
 
         $share->increment('download_count');
 
+        try {
+            if ($share->created_by && ($createur = \App\Models\User::find($share->created_by))) {
+                app(\App\Services\NotificationService::class)->notify(
+                    $createur,
+                    'share.downloaded',
+                    'Document téléchargé',
+                    "« {$share->document->name} » a été téléchargé via un lien de partage.",
+                    ['document_id' => $share->document_id]
+                );
+            }
+        } catch (\Throwable $e) {
+            report($e); // une notification ratée ne doit jamais bloquer le téléchargement
+        }
+
         return $nasStorage->streamDownload(
             $share->document->currentVersion->file_path,
             $share->document->name

@@ -94,7 +94,6 @@ class NasConfigController extends Controller
 
         // Mémorise l'état et l'espace mesurés (sans polluer le journal)
         $config->forceFill([
-            'status' => $statut,
             'total_space_bytes' => $usage['total_bytes'] ?? $config->total_space_bytes,
             'used_space_bytes' => $usage['used_bytes'] ?? $config->used_space_bytes,
         ])->saveQuietly();

@@ -37,12 +37,22 @@ class BackupService
                 'status' => 'completed',
                 'completed_at' => now(),
             ]);
+
+            if ($backup->created_by && ($demandeur = \App\Models\User::find($backup->created_by))) {
+                app(NotificationService::class)->notify($demandeur, 'backup.completed', 'Sauvegarde terminée', "Votre sauvegarde « {$backup->type} » s'est terminée avec succès.");
+            }
         } catch (\Throwable $e) {
             $backup->update([
                 'status' => 'failed',
                 'error_message' => $e->getMessage(),
                 'completed_at' => now(),
             ]);
+
+            app(NotificationService::class)->notifyAdmins(
+                'backup.failed',
+                'Échec de sauvegarde',
+                "La sauvegarde « {$backup->type} » a échoué : " . $e->getMessage()
+            );
         }
     }
 

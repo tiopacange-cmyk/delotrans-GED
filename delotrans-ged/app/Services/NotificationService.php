@@ -24,4 +24,13 @@ class NotificationService
             $this->notify($user, $type, $title, $message);
         }
     }
+
+    public function notifyAdmins(string $type, string $title, ?string $message = null): void
+    {
+        $admins = \App\Models\User::whereHas('role', fn ($q) => $q->where('slug', 'admin'))
+            ->where('is_active', true)
+            ->get();
+
+        $this->notifyMany($admins, $type, $title, $message);
+    }
 }
