@@ -14,6 +14,10 @@ use App\Http\Controllers\Api\{
     BackupController,
     ActivityLogController,
     NotificationController,
+    UserController,
+    RoleController,
+    PermissionController,
+    ProfileController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -71,6 +75,20 @@ Route::prefix('v1')->group(function () {
         // Tableau de bord
         Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
         Route::get('/dashboard/recent-documents', [DashboardController::class, 'recentDocuments']);
+
+        // Mon compte
+        Route::put('/auth/password', [ProfileController::class, 'changePassword']);
+
+        // Utilisateurs, rôles et permissions
+        Route::get('/users', [UserController::class, 'index']);
+        Route::post('/users', [UserController::class, 'store']);
+        Route::put('/users/{user}', [UserController::class, 'update']);
+        Route::delete('/users/{user}', [UserController::class, 'destroy']);
+        Route::get('/roles', [RoleController::class, 'index']);
+        Route::post('/roles', [RoleController::class, 'store']);
+        Route::put('/roles/{role}', [RoleController::class, 'update']);
+        Route::delete('/roles/{role}', [RoleController::class, 'destroy']);
+        Route::get('/permissions', [PermissionController::class, 'index']);
 
         // ===== V2 =====
 
