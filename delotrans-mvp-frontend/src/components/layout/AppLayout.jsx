@@ -1,3 +1,4 @@
+import ChangePasswordButton from './ChangePasswordButton';
 import NotificationBell from './NotificationBell';
 import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
@@ -195,6 +196,7 @@ export default function AppLayout() {
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-sm font-semibold text-white">
               {initiales(user?.name)}
             </div>
+            <ChangePasswordButton />
             <button
               onClick={handleLogout}
               className="ml-1 flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600"

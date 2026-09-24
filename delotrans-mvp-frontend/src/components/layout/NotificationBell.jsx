@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Bell, HardDrive, DatabaseBackup, Share2, Info, X, CheckCheck, Loader2 } from 'lucide-react';
+import { Bell, HardDrive, DatabaseBackup, Share2, Info, X, CheckCheck, Loader2, KeyRound } from 'lucide-react';
 import axiosClient from '../../api/axiosClient';
 
 function icone(type = '') {
   if (type.startsWith('nas')) return HardDrive;
   if (type.startsWith('backup')) return DatabaseBackup;
   if (type.startsWith('share')) return Share2;
+  if (type.startsWith('password')) return KeyRound;
   return Info;
 }
 

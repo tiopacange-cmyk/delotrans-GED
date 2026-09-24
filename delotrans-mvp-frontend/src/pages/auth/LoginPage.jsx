@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileStack, Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, ShieldCheck, HardDrive, Share2, History } from 'lucide-react';
+import { FileStack, Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, ShieldCheck, HardDrive, Share2, History, CheckCircle2 } from 'lucide-react';
 import { authApi } from '../../api/authApi';
+import axiosClient from '../../api/axiosClient';
 import { useAuthStore } from '../../stores/authStore';
 
 const ATOUTS = [
@@ -19,6 +20,21 @@ export default function LoginPage() {
   const [voir, setVoir] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [oubli, setOubli] = useState(null); // null | { email, envoi, message }
+
+  const demanderReinitialisation = async (e) => {
+    e.preventDefault();
+    setOubli((o) => ({ ...o, envoi: true }));
+    try {
+      const res = await axiosClient.post('/auth/forgot-password', { email: oubli.email });
+      setOubli((o) => ({ ...o, envoi: false, message: res.data.message }));
+    } catch (err) {
+      const msg = err.response?.status === 429
+        ? 'Trop de demandes. Réessayez dans une minute.'
+        : err.response?.data?.message || 'Envoi impossible.';
+      setOubli((o) => ({ ...o, envoi: false, erreur: msg }));
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -150,9 +166,60 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-8 text-center text-xs text-slate-400">
-            Mot de passe oublié ? Contactez votre administrateur.
-          </p>
+          <div className="mt-8 text-center">
+            {!oubli ? (
+              <button
+                type="button"
+                onClick={() => setOubli({ email, envoi: false, message: '', erreur: '' })}
+                className="text-sm font-medium text-brand-600 hover:text-brand-700 hover:underline"
+              >
+                Mot de passe oublié ?
+              </button>
+            ) : (
+              <div className="rounded-xl border border-slate-200 bg-white p-4 text-left shadow-sm">
+                <p className="text-sm font-semibold text-slate-700">Mot de passe oublié</p>
+                {oubli.message ? (
+                  <>
+                    <p className="mt-2 flex items-start gap-2 text-sm text-emerald-700">
+                      <CheckCircle2 size={16} className="mt-0.5 shrink-0" /> {oubli.message}
+                    </p>
+                    <div className="mt-3 text-right">
+                      <button type="button" onClick={() => setOubli(null)} className="text-sm font-medium text-brand-600 hover:underline">
+                        Retour à la connexion
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <form onSubmit={demanderReinitialisation}>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Indiquez votre e-mail : un administrateur sera prévenu et vous communiquera un nouveau mot de passe.
+                    </p>
+                    <input
+                      type="email"
+                      required
+                      value={oubli.email}
+                      onChange={(e) => setOubli({ ...oubli, email: e.target.value, erreur: '' })}
+                      placeholder="vous@delotrans.cm"
+                      className="mt-3 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                    />
+                    {oubli.erreur && <p className="mt-1 text-xs text-red-600">{oubli.erreur}</p>}
+                    <div className="mt-3 flex justify-end gap-2">
+                      <button type="button" onClick={() => setOubli(null)} className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-50">
+                        Annuler
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={oubli.envoi}
+                        className="flex items-center gap-2 rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"
+                      >
+                        {oubli.envoi && <Loader2 size={14} className="animate-spin" />} Prévenir l'administrateur
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

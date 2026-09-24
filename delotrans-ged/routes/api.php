@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\{
     RoleController,
     PermissionController,
     ProfileController,
+    PasswordRequestController,
 };
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,7 @@ Route::prefix('v1')->group(function () {
 
     // Publiques
     Route::post('/auth/login', [AuthController::class, 'login']);
+    Route::post('/auth/forgot-password', [PasswordRequestController::class, 'store'])->middleware('throttle:5,1');
 
     // Partage public (sans compte, limité à 20 requêtes/minute)
     Route::prefix('public/shares')->middleware('throttle:20,1')->group(function () {
