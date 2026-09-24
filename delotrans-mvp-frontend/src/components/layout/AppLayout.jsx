@@ -15,6 +15,8 @@ import {
   HardDrive,
   DatabaseBackup,
   ScrollText,
+  UserCog,
+  ShieldCheck,
 } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
 import { authApi } from '../../api/authApi';
@@ -31,8 +33,24 @@ const navigation = [
 const administration = [
   { to: '/admin/nas', label: 'Stockage NAS', icon: HardDrive },
   { to: '/admin/sauvegardes', label: 'Sauvegardes', icon: DatabaseBackup },
+  { to: '/admin/utilisateurs', label: 'Utilisateurs', icon: UserCog },
+  { to: '/admin/roles', label: 'Rôles et droits', icon: ShieldCheck },
   { to: '/admin/journal', label: 'Journal d\'activité', icon: ScrollText },
 ];
+
+// Permission(s) nécessaire(s) pour voir chaque entrée du menu
+const PERMS = {
+  '/documents': ['documents.view'],
+  '/folders': ['folders.view'],
+  '/clients': ['clients.view'],
+  '/categories': ['categories.view'],
+  '/search': ['documents.view'],
+  '/admin/nas': ['nas.manage'],
+  '/admin/sauvegardes': ['backups.view'],
+  '/admin/utilisateurs': ['users.view'],
+  '/admin/roles': ['roles.manage'],
+  '/admin/journal': ['logs.view_all', 'logs.view_own'],
+};
 
 function initiales(nom) {
   if (!nom) return '?';
@@ -48,6 +66,8 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const can = useAuthStore((state) => state.can);
+  const visible = (item) => !PERMS[item.to] || PERMS[item.to].some((p) => can(p));
   const [menuOuvert, setMenuOuvert] = useState(false);
 
   const handleLogout = async () => {
@@ -60,7 +80,7 @@ export default function AppLayout() {
   };
 
   const menu = (
-    <nav className="flex h-full flex-col bg-brand-900 text-brand-100">
+    <nav className="flex h-full flex-col overflow-y-auto bg-brand-900 text-brand-100">
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 border-b border-white/10 px-5">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-500 text-brand-900">
@@ -74,7 +94,7 @@ export default function AppLayout() {
 
       {/* Liens */}
       <ul className="space-y-1 px-3 py-4">
-        {navigation.map(({ to, label, icon: Icon, end }) => (
+        {navigation.filter(visible).map(({ to, label, icon: Icon, end }) => (
           <li key={to}>
             <NavLink
               to={to}
@@ -95,9 +115,11 @@ export default function AppLayout() {
         ))}
       </ul>
 
-      <p className="px-6 pt-2 text-xs font-semibold uppercase tracking-wider text-brand-200/60">Administration</p>
+      {administration.some(visible) && (
+        <p className="px-6 pt-2 text-xs font-semibold uppercase tracking-wider text-brand-200/60">Administration</p>
+      )}
       <ul className="space-y-1 px-3 py-2">
-        {administration.map(({ to, label, icon: Icon, end }) => (
+        {administration.filter(visible).map(({ to, label, icon: Icon, end }) => (
           <li key={to}>
             <NavLink
               to={to}

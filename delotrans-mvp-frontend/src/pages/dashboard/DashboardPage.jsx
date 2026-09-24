@@ -185,8 +185,8 @@ export default function DashboardPage() {
                           </div>
                         </td>
                         <td className="px-5 py-3 text-slate-500">{doc.client?.name ?? '—'}</td>
-                        <td className="hidden px-5 py-3 text-slate-500 md:table-cell">{tailleLisible(doc.file_size)}</td>
-                        <td className="hidden px-5 py-3 text-slate-500 md:table-cell">{dateLisible(doc.created_at)}</td>
+                        <td className="hidden whitespace-nowrap px-5 py-3 text-slate-500 md:table-cell">{tailleLisible(doc.file_size)}</td>
+                        <td className="hidden whitespace-nowrap px-5 py-3 text-slate-500 md:table-cell">{dateLisible(doc.created_at)}</td>
                         <td className="px-5 py-3">
                           <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statut.classe}`}>
                             {statut.label}

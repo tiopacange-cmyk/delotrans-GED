@@ -1,3 +1,5 @@
+import UsersPage from '../pages/admin/UsersPage';
+import RolesPage from '../pages/admin/RolesPage';
 import NasPage from '../pages/admin/NasPage';
 import BackupsPage from '../pages/admin/BackupsPage';
 import LogsPage from '../pages/admin/LogsPage';
@@ -32,6 +34,8 @@ export default function AppRouter() {
             <Route path="/admin/nas" element={<NasPage />} />
             <Route path="/admin/sauvegardes" element={<BackupsPage />} />
             <Route path="/admin/journal" element={<LogsPage />} />
+            <Route path="/admin/utilisateurs" element={<UsersPage />} />
+            <Route path="/admin/roles" element={<RolesPage />} />
           </Route>
         </Route>
       </Routes>
