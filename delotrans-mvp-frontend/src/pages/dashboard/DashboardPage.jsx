@@ -1,3 +1,4 @@
+import DashboardCharts from '../../components/dashboard/DashboardCharts';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FileText, Users, FolderTree, UserCog, HardDrive, FileWarning } from 'lucide-react';
@@ -201,6 +202,7 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+      <DashboardCharts />
     </div>
   );
 }

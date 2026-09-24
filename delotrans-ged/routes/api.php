@@ -77,6 +77,7 @@ Route::prefix('v1')->group(function () {
         // Tableau de bord
         Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
         Route::get('/dashboard/recent-documents', [DashboardController::class, 'recentDocuments']);
+        Route::get('/dashboard/charts', [DashboardController::class, 'charts']);
 
         // Mon compte
         Route::put('/auth/password', [ProfileController::class, 'changePassword']);
