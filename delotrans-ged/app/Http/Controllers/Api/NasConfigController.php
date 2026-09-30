@@ -9,8 +9,10 @@ use Illuminate\Http\Request;
 
 class NasConfigController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        abort_unless($request->user()->hasPermission('nas.manage'), 403);
+
         return response()->json(['data' => NasConfig::all()]);
     }
 
