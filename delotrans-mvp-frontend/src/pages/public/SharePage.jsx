@@ -8,7 +8,8 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: { Accept: 'application/json' },
 });
-const origineApi = new URL(import.meta.env.VITE_API_URL).origin;
+// VITE_API_URL peut être absolue (https://api…/api/v1) ou relative (/api/v1)
+const origineApi = new URL(import.meta.env.VITE_API_URL, window.location.origin).origin;
 
 const ERREURS = {
   404: { titre: 'Lien introuvable', texte: "Ce lien de partage n'existe pas ou a été supprimé." },
