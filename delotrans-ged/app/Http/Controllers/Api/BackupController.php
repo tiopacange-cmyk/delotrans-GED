@@ -10,8 +10,10 @@ use Illuminate\Http\Request;
 
 class BackupController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        abort_unless($request->user()->hasPermission('backups.view'), 403);
+
         return response()->json(['data' => Backup::latest()->paginate(15)]);
     }
 

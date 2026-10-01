@@ -65,6 +65,9 @@ class DatabaseSeeder extends Seeder
         ])->pluck('id');
         $user->permissions()->sync($userSlugs);
 
+        // Permissions V2 (NAS, sauvegardes, journaux, partages) puis réalignement des 3 rôles
+        $this->call([V2PermissionSeeder::class, RolesPermissionsSeeder::class]);
+
         // Comptes de démo — mots de passe à changer immédiatement après la première connexion
         User::firstOrCreate(
             ['email' => 'admin@delotrans.fr'],
