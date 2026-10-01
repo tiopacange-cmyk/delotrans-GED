@@ -1,6 +1,7 @@
 # Mettre DELOTRANS GED en ligne gratuitement
 
-Le script `installer-serveur.sh` installe toute l'application sur un serveur Ubuntu :
+Le script `installer-serveur.sh` installe toute l'application sur un serveur Ubuntu **dédié**
+(il remplace le site web par défaut : ne pas l'utiliser sur un serveur qui héberge déjà une autre application) :
 interface, API, base SQLite, file d'attente, sauvegarde quotidienne, et HTTPS si vous avez un nom de domaine.
 Tout est servi à une seule adresse : pas de port 8000 à ouvrir.
 
