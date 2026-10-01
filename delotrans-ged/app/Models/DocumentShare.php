@@ -21,7 +21,7 @@ class DocumentShare extends Model
 
     protected $fillable = [
         'document_id', 'token', 'password_hash', 'expires_at',
-        'max_downloads', 'download_count', 'created_by',
+        'max_downloads', 'download_count', 'created_by', 'revoked_at',
     ];
 
     protected function casts(): array
